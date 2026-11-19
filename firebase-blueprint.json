@@ -1,0 +1,327 @@
+{
+  "entities": {
+    "StudentProfile": {
+      "title": "StudentProfile",
+      "description": "Privacy-minimized student profile, reading metrics, streak tracking, resume positions, and earned achievement badges (PII stored strictly in /users/{userId}/private/info).",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "name": { "type": "string", "maxLength": 100 },
+        "school": { "type": "string", "maxLength": 150 },
+        "grade": { "type": "string", "maxLength": 20 },
+        "section": { "type": "string", "maxLength": 30 },
+        "xp": { "type": "number" },
+        "streak": { "type": "number" },
+        "lastActiveDate": { "type": "string", "maxLength": 30 },
+        "lastVisitedChapterId": { "type": "string", "maxLength": 64 },
+        "lastVisitedTopicId": { "type": "string", "maxLength": 80 },
+        "lastVisitedTopicIndex": { "type": "number" },
+        "recentChapterIds": { "type": "array" },
+        "savedFlashcardIds": { "type": "array" },
+        "studyPreferences": { "type": "object" },
+        "onboardingCompleted": { "type": "boolean" },
+        "createdAt": { "type": "string", "maxLength": 40 },
+        "dailyGoalMinutes": { "type": "number" },
+        "todayStudyMinutes": { "type": "number" },
+        "completedChapterIds": { "type": "array" },
+        "readingProgress": { "type": "object" },
+        "badges": { "type": "array" },
+        "leaderboardOptIn": { "type": "boolean" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "name", "school", "grade", "section", "xp", "streak", "dailyGoalMinutes", "todayStudyMinutes", "leaderboardOptIn", "updatedAt"]
+    },
+    "StudentPrivateInfo": {
+      "title": "StudentPrivateInfo",
+      "description": "Strictly private student account contact/profile details isolated from main profile and public leaderboard.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "email": { "type": "string", "maxLength": 200 },
+        "phoneNumber": { "type": "string", "maxLength": 40 },
+        "photoURL": { "type": "string", "maxLength": 1000 },
+        "authProvider": { "type": "string", "maxLength": 64 },
+        "board": { "type": "string", "maxLength": 40 },
+        "createdAt": { "type": "string", "maxLength": 40 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "board", "updatedAt"]
+    },
+    "AITutorMessage": {
+      "title": "AITutorMessage",
+      "description": "Private student AI Tutor question and response history saved for online cross-device continuity.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "userId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "sender": { "type": "string", "enum": ["user", "tutor"] },
+        "text": { "type": "string", "maxLength": 8000 },
+        "chapterTitle": { "type": "string", "maxLength": 200 },
+        "subjectName": { "type": "string", "maxLength": 100 },
+        "timestamp": { "type": "string", "maxLength": 40 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "userId", "sender", "text", "timestamp", "createdAt"]
+    },
+    "ChapterProgress": {
+      "title": "ChapterProgress",
+      "description": "Reading progress and completion state per chapter for an authenticated student.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "chapterId": { "type": "string", "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "subjectId": { "type": "string", "maxLength": 64 },
+        "readingProgress": { "type": "number" },
+        "completed": { "type": "boolean" },
+        "completedAt": { "type": "string", "maxLength": 40 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "chapterId", "subjectId", "readingProgress", "completed", "updatedAt"]
+    },
+    "QuizAttempt": {
+      "title": "QuizAttempt",
+      "description": "Immutable student chapter quiz performance score record.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "userId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "chapterId": { "type": "string", "maxLength": 64 },
+        "subjectId": { "type": "string", "maxLength": 64 },
+        "score": { "type": "number" },
+        "correctAnswers": { "type": "number" },
+        "totalQuestions": { "type": "number" },
+        "percentage": { "type": "number" },
+        "timeTakenSeconds": { "type": "number" },
+        "timestamp": { "type": "string", "maxLength": 40 }
+      },
+      "required": ["id", "userId", "chapterId", "subjectId", "score", "correctAnswers", "totalQuestions", "percentage", "timeTakenSeconds", "timestamp"]
+    },
+    "ExamResult": {
+      "title": "ExamResult",
+      "description": "Immutable student mock examination marks and timing record.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "userId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "examId": { "type": "string", "maxLength": 64 },
+        "examTitle": { "type": "string", "maxLength": 200 },
+        "term": { "type": "string", "maxLength": 40 },
+        "subjectName": { "type": "string", "maxLength": 80 },
+        "score": { "type": "number" },
+        "correctAnswers": { "type": "number" },
+        "totalQuestions": { "type": "number" },
+        "marksScored": { "type": "number" },
+        "totalMarks": { "type": "number" },
+        "percentage": { "type": "number" },
+        "timeTakenSeconds": { "type": "number" },
+        "timestamp": { "type": "string", "maxLength": 40 }
+      },
+      "required": ["id", "userId", "examId", "examTitle", "term", "subjectName", "score", "correctAnswers", "totalQuestions", "marksScored", "totalMarks", "percentage", "timeTakenSeconds", "timestamp"]
+    },
+    "BookmarkItem": {
+      "title": "BookmarkItem",
+      "description": "Student chapter/concept bookmark saved for quick revision.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "userId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "chapterId": { "type": "string", "maxLength": 64 },
+        "title": { "type": "string", "maxLength": 200 },
+        "type": { "type": "string", "maxLength": 50 },
+        "snippet": { "type": "string", "maxLength": 400 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "userId", "chapterId", "title", "type", "snippet", "updatedAt"]
+    },
+    "PersonalNote": {
+      "title": "PersonalNote",
+      "description": "Private personal study note written by a student for a chapter.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "chapterId": { "type": "string", "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "content": { "type": "string", "maxLength": 10000 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "chapterId", "content", "updatedAt"]
+    },
+    "MistakeEntry": {
+      "title": "MistakeEntry",
+      "description": "Incorrect quiz or exam question stored in Mistake Notebook for targeted revision.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "userId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "questionText": { "type": "string", "maxLength": 600 },
+        "subjectId": { "type": "string", "maxLength": 64 },
+        "chapterTitle": { "type": "string", "maxLength": 150 },
+        "userAnswer": { "type": "string", "maxLength": 300 },
+        "correctAnswer": { "type": "string", "maxLength": 300 },
+        "explanation": { "type": "string", "maxLength": 1500 },
+        "mastered": { "type": "boolean" },
+        "savedAt": { "type": "string", "maxLength": 40 }
+      },
+      "required": ["id", "userId", "questionText", "subjectId", "chapterTitle", "userAnswer", "correctAnswer", "explanation", "mastered", "savedAt"]
+    },
+    "StudyTask": {
+      "title": "StudyTask",
+      "description": "Scheduled study plan item in a student's Study Planner.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "userId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "title": { "type": "string", "maxLength": 200 },
+        "subjectId": { "type": "string", "maxLength": 64 },
+        "chapterId": { "type": "string", "maxLength": 64 },
+        "targetDate": { "type": "string", "maxLength": 30 },
+        "estimatedMinutes": { "type": "number" },
+        "completed": { "type": "boolean" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "userId", "title", "subjectId", "chapterId", "targetDate", "estimatedMinutes", "completed", "updatedAt"]
+    },
+    "LeaderboardEntry": {
+      "title": "LeaderboardEntry",
+      "description": "Opt-in non-PII class leaderboard standing showing study display name, section, XP, and daily streak.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "name": { "type": "string", "maxLength": 100 },
+        "section": { "type": "string", "maxLength": 30 },
+        "school": { "type": "string", "maxLength": 150 },
+        "grade": { "type": "string", "maxLength": 20 },
+        "xp": { "type": "number" },
+        "streak": { "type": "number" },
+        "completedChaptersCount": { "type": "number" },
+        "badgesCount": { "type": "number" },
+        "isPublic": { "type": "boolean" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "name", "section", "xp", "streak", "completedChaptersCount", "badgesCount", "isPublic", "updatedAt"]
+    },
+    "CurriculumSubjectOverride": {
+      "title": "CurriculumSubjectOverride",
+      "description": "Administrator-managed official CMS syllabus & textbook verification metadata per subject.",
+      "type": "object",
+      "properties": {
+        "subjectId": { "type": "string", "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "prescribedTextbook": { "type": "string", "maxLength": 300 },
+        "academicYear": { "type": "string", "maxLength": 40 },
+        "syllabusVerificationStatus": { "type": "string", "enum": ["verified", "partial_missing"] },
+        "verifiedSourceNote": { "type": "string", "maxLength": 500 },
+        "missingInformation": { "type": "array" },
+        "officialChapterOutline": { "type": "array" },
+        "updatedBy": { "type": "string", "maxLength": 128 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["subjectId", "prescribedTextbook", "academicYear", "syllabusVerificationStatus", "updatedBy", "updatedAt"]
+    },
+    "CurriculumChapterDoc": {
+      "title": "CurriculumChapterDoc",
+      "description": "Administrator-managed live chapter notes, diagrams, and quiz data synced across all student accounts.",
+      "type": "object",
+      "properties": {
+        "chapterId": { "type": "string", "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "subjectId": { "type": "string", "maxLength": 64 },
+        "mode": { "type": "string", "enum": ["override_existing", "add_custom"] },
+        "chapterData": { "type": "object" },
+        "updatedBy": { "type": "string", "maxLength": 128 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["chapterId", "subjectId", "mode", "chapterData", "updatedBy", "updatedAt"]
+    },
+    "SyllabusDocumentMeta": {
+      "title": "SyllabusDocumentMeta",
+      "description": "Metadata and Firebase Storage reference for administrator-uploaded CMS syllabus files.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "fileName": { "type": "string", "maxLength": 200 },
+        "sizeBytes": { "type": "number" },
+        "uploadedAt": { "type": "string", "maxLength": 60 },
+        "subjectId": { "type": "string", "maxLength": 64 },
+        "parsedSummary": { "type": "string", "maxLength": 500 },
+        "storagePath": { "type": "string", "maxLength": 300 },
+        "downloadUrl": { "type": "string", "maxLength": 1000 },
+        "uploadedBy": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "fileName", "sizeBytes", "uploadedAt", "uploadedBy", "createdAt"]
+    },
+    "AdminRole": {
+      "title": "AdminRole",
+      "description": "Authorized CMS curriculum administrator access record.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "role": { "type": "string", "enum": ["admin"] },
+        "label": { "type": "string", "maxLength": 100 },
+        "grantedBy": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "role", "grantedBy", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "StudentProfile",
+      "description": "Private student learning profile and achievements (owner-only access, PII isolated in /private/info)."
+    },
+    "/users/{userId}/private/{docId}": {
+      "schema": "StudentPrivateInfo",
+      "description": "Strictly private student contact and account identity info (email, phone, photoURL) isolated from main profile."
+    },
+    "/users/{userId}/aiTutorHistory/{msgId}": {
+      "schema": "AITutorMessage",
+      "description": "Private student AI Tutor conversation history saved for cloud continuity."
+    },
+    "/users/{userId}/progress/{chapterId}": {
+      "schema": "ChapterProgress",
+      "description": "Private chapter reading progress and completion status."
+    },
+    "/users/{userId}/quizAttempts/{attemptId}": {
+      "schema": "QuizAttempt",
+      "description": "Private immutable chapter quiz attempts and scores."
+    },
+    "/users/{userId}/examResults/{examId}": {
+      "schema": "ExamResult",
+      "description": "Private immutable mock examination marks."
+    },
+    "/users/{userId}/bookmarks/{bookmarkId}": {
+      "schema": "BookmarkItem",
+      "description": "Private student bookmarks for quick revision."
+    },
+    "/users/{userId}/notes/{chapterId}": {
+      "schema": "PersonalNote",
+      "description": "Private personal study notes per chapter."
+    },
+    "/users/{userId}/mistakes/{mistakeId}": {
+      "schema": "MistakeEntry",
+      "description": "Private mistake notebook items for targeted revision."
+    },
+    "/users/{userId}/tasks/{taskId}": {
+      "schema": "StudyTask",
+      "description": "Private scheduled study planner tasks."
+    },
+    "/leaderboard/{userId}": {
+      "schema": "LeaderboardEntry",
+      "description": "Opt-in non-PII class leaderboard rankings."
+    },
+    "/curriculumSubjects/{subjectId}": {
+      "schema": "CurriculumSubjectOverride",
+      "description": "Admin-managed official CMS syllabus overrides readable by students."
+    },
+    "/curriculumChapters/{chapterId}": {
+      "schema": "CurriculumChapterDoc",
+      "description": "Admin-managed chapter notes, diagrams, and quiz data readable by students."
+    },
+    "/curriculumDocuments/{docId}": {
+      "schema": "SyllabusDocumentMeta",
+      "description": "Admin-uploaded CMS syllabus file metadata and Storage references."
+    },
+    "/admins/{userId}": {
+      "schema": "AdminRole",
+      "description": "Trusted administrator UIDs authorized to publish curriculum updates."
+    }
+  }
+}

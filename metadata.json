@@ -1,0 +1,6 @@
+{
+  "name": "ICSE Genius",
+  "description": "Comprehensive AI-powered educational learning platform for ICSE Class 8 students with detailed notes, interactive quizzes, visual diagrams, and an AI tutor.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

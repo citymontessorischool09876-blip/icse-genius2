@@ -1,0 +1,51 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Global Default Deny
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isEmailVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    // Bootstrap primary CMS administrator; additional admins manage via Firestore /admins
+    function isBootstrapAdmin() {
+      return isEmailVerified() && request.auth.token.email == 'tejasvthakur09876@gmail.com';
+    }
+
+    // Official CMS syllabus circulars (.pdf, .json, .csv, .txt) <= 10 MB
+    match /syllabi/{fileName} {
+      allow read: if true;
+      allow write: if isBootstrapAdmin()
+        && fileName.size() >= 1 && fileName.size() <= 180
+        && request.resource != null
+        && request.resource.size <= 10 * 1024 * 1024
+        && (
+          request.resource.contentType.matches('application/pdf') ||
+          request.resource.contentType.matches('application/json') ||
+          request.resource.contentType.matches('text/csv') ||
+          request.resource.contentType.matches('text/plain') ||
+          request.resource.contentType.matches('application/octet-stream')
+        );
+      allow delete: if isBootstrapAdmin();
+    }
+
+    // Chapter diagram & educational figure images <= 5 MB
+    match /diagrams/{fileName} {
+      allow read: if true;
+      allow write: if isBootstrapAdmin()
+        && fileName.size() >= 1 && fileName.size() <= 180
+        && request.resource != null
+        && request.resource.size <= 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/(png|jpeg|jpg|webp|svg\\+xml)');
+      allow delete: if isBootstrapAdmin();
+    }
+  }
+}
